@@ -4,10 +4,11 @@ from .models import Profile
 
 
 class LoginForm(forms.Form):
-	username = forms.CharField()
+	username = forms.CharField(label='Username or Email')
 	password = forms.CharField(widget=forms.PasswordInput)
+	# print(f"[+] -----{username.label}")
 
-	
+
 class UserRegistrationForm(forms.ModelForm):
 	password = forms.CharField(label='Password', widget=forms.PasswordInput)
 	password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
@@ -24,7 +25,8 @@ class UserRegistrationForm(forms.ModelForm):
 
 	def clean_email(self):
 		data = self.cleaned_data['email']
-		if User.objects.filter(email=data).exists():
+		
+		if User.objects.filter(email=data).exists() :
 			raise forms.ValidationError('Email already in use!')
 		return data
 
@@ -37,16 +39,17 @@ class UserEditForm(forms.ModelForm):
 
 	def clean_email(self):
 		data = self.cleaned_data['email']
+
 		qs = User.objects.exclude(id=self.instance.id).filter(email=data)
 
-		if qs.exists():
+		if qs.exists() and data:
 			raise forms.ValidationError('Email already in use!')
 		return data
-
+ 
 
 class ProfileEditForm(forms.ModelForm):
 	class Meta:
 		model = Profile
 
 		fields = ['date_of_birth', 'photo']
-		
+		 
